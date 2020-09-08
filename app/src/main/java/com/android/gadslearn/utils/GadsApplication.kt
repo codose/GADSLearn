@@ -1,20 +1,15 @@
-package com.codose.bgfs_android.utils
+package com.android.gadslearn.utils
 
 import android.app.Application
+import android.content.ContextWrapper
+import com.codose.bgfs_android.utils.Converters
+import com.pixplicity.easyprefs.library.Prefs
 
-class BgfsApplication : Application(){
+class GadsApplication : Application(){
 
     override fun onCreate() {
         super.onCreate()
-        
-    }
-    
-        private fun setAppTheme() {
-        if(PrefsUtil.isDarkMode()){
-            Converters.setThemeMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }else{
-            Converters.setThemeMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+        initPref()
     }
 
     private fun initPref() {

@@ -24,12 +24,6 @@ object PrefsUtil
     fun isDarkMode() : Boolean{
         return Prefs.getBoolean("themeMode",true)
     }
-    
-    fun setDarkMode(isSet: Int){
-        AppCompatDelegate.setDefaultNightMode(isSet)
-        Prefs.putBoolean("themeMode",isSet == AppCompatDelegate.MODE_NIGHT_YES)
-    }
-
     fun isOnboardingDone() : Boolean{
         return Prefs.getBoolean(ONBOARDING,false)
     }

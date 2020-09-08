@@ -1,6 +1,7 @@
-package com.codose.bgfs_android.network.api
+package com.android.gadslearn.network.api
 
-import com.codose.bgfs_android.utils.Constants.BASE_URL
+import com.android.gadslearn.utils.Constants.BASE_URL
+import com.android.gadslearn.utils.Constants.GOOGLE_BASE
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -48,6 +49,14 @@ object RetrofitClient {
 
     fun apiService() = Retrofit.Builder()
         .baseUrl(BASE_URL)
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .addConverterFactory(gsonConverter)
+        .client(client)
+        .build()
+        .create(ApiService::class.java)
+
+    fun googleApiService() = Retrofit.Builder()
+        .baseUrl(GOOGLE_BASE)
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .addConverterFactory(gsonConverter)
         .client(client)
