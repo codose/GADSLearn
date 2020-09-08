@@ -1,5 +1,6 @@
 package com.android.gadslearn.views.main
 
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import com.android.gadslearn.R
 import com.android.gadslearn.views.main.tabs.MainViewModel
 import com.codose.bgfs_android.utils.Resource
 import com.android.gadslearn.views.base.BaseFragment
+import kotlinx.android.synthetic.main.confirm_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_submit.*
+import kotlinx.android.synthetic.main.success_dialog.view.*
 
 class SubmitFragment : BaseFragment() {
     private val viewModel by lazy {
@@ -64,28 +67,75 @@ class SubmitFragment : BaseFragment() {
         val lName = frag_submit_last_text_edit.text.toString()
         val email = frag_submit_email_text_edit.text.toString()
         val link = frag_submit_link_text_edit.text.toString()
-        viewModel.submitApplication(fName, lName, email, link)
-        Handler().postDelayed({
-            showToast("Submission in progress")
-            goBack()
-        },3000)
-        viewModel.submission.observe(viewLifecycleOwner, Observer {
-            when(it){
-                is Resource.Loading -> {
-                    showProgress()
-                }
-                is Resource.Success -> {
-                    val data = it.data
-                    showToast(data)
-                    goBack()
-                    hideProgress()
-                }
-                is Resource.Failure -> {
-                    hideProgress()
-                }
-            }
-        })
+        showSubmissionDialog(fName, lName, email, link)
+
     }
+
+    private fun showSubmissionDialog(
+        fName: String,
+        lName: String,
+        email: String,
+        link: String
+    ) {
+        val dialog = Dialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.confirm_dialog,null)
+        dialog.setContentView(view)
+        view.cancel_button.setOnClickListener {
+            dialog.dismiss()
+        }
+        view.dialog_submit_btn.setOnClickListener {
+            viewModel.submitApplication(fName, lName, email, link)
+            Handler().postDelayed({
+                showSucessDialog()
+            },3000)
+            viewModel.submission.observe(viewLifecycleOwner, Observer {
+                when(it){
+                    is Resource.Loading -> {
+                        dialog.dismiss()
+                        showProgress()
+                    }
+                    is Resource.Success -> {
+                        val data = it.data
+                        showToast(data)
+                        showSucessDialog()
+                        hideProgress()
+                    }
+                    is Resource.Failure -> {
+                        hideProgress()
+                        showFailureDialog()
+                    }
+                }
+            })
+        }
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
+    private fun showFailureDialog() {
+        val dialog = Dialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.success_dialog,null)
+        dialog.setContentView(view)
+        view.success_image.setImageResource(R.drawable.ic_warn)
+        view.success_text_ii.text = "Submission Failed"
+        view.success_cancel_button.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
+    private fun showSucessDialog() {
+        val dialog = Dialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.success_dialog,null)
+        dialog.setContentView(view)
+        view.success_cancel_button.setOnClickListener {
+            dialog.dismiss()
+            goBack()
+        }
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
 
     private fun hideProgress() {
         submit_progress.visibility = View.GONE
