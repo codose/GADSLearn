@@ -1,6 +1,7 @@
 package com.android.gadslearn.views.main
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,6 +65,10 @@ class SubmitFragment : BaseFragment() {
         val email = frag_submit_email_text_edit.text.toString()
         val link = frag_submit_link_text_edit.text.toString()
         viewModel.submitApplication(fName, lName, email, link)
+        Handler().postDelayed({
+            showToast("Submission in progress")
+            goBack()
+        },3000)
         viewModel.submission.observe(viewLifecycleOwner, Observer {
             when(it){
                 is Resource.Loading -> {
